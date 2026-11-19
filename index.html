@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ใบปะหน้าขนส่ง – เมืองเกษตร</title>
+<style>
+  :root{--bg:#f6f7f4;--card:#fff;--ink:#1e2a22;--mut:#6b776f;--line:#dfe4dc;--accent:#1f7a4d;--accent-ink:#fff;--warn:#b45309;--warn-bg:#fff4e0;--bad:#b42318;--bad-bg:#fdecea}
+  @media (prefers-color-scheme:dark){:root{--bg:#141a16;--card:#1d2520;--ink:#e8efe9;--mut:#9aa89f;--line:#2e3a32;--accent:#3fb37a;--accent-ink:#06210f;--warn:#f0b35a;--warn-bg:#3a2d12;--bad:#ff8a80;--bad-bg:#3b1c19}}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 "Sarabun","Tahoma",system-ui,sans-serif}
+  .wrap{max-width:1180px;margin:0 auto;padding:20px 16px 60px}
+  h1{font-size:1.5rem;margin:0 0 4px}
+  .sub{color:var(--mut);margin:0 0 18px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:16px}
+  .drop{border:2px dashed var(--line);border-radius:12px;padding:28px;text-align:center;cursor:pointer;color:var(--mut)}
+  .drop.over{border-color:var(--accent);color:var(--accent)}
+  .drop b{display:block;color:var(--ink);font-size:1.05rem;margin-bottom:4px}
+  .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+  .row.sp{justify-content:space-between}
+  button,.btn{font:inherit;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:8px;padding:8px 14px;cursor:pointer}
+  button.pri{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:600}
+  button:disabled{opacity:.45;cursor:not-allowed}
+  label.opt{display:flex;gap:8px;align-items:center;color:var(--mut);font-size:.95rem}
+  select,input[type=text],input[type=number]{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:4px 8px;width:100%}
+  input[type=number]{width:70px}
+  .tablewrap{overflow-x:auto}
+  table{border-collapse:collapse;width:100%;min-width:900px}
+  th,td{border-bottom:1px solid var(--line);padding:6px 6px;text-align:left;vertical-align:top;font-size:.93rem}
+  th{color:var(--mut);font-weight:600;font-size:.82rem;white-space:nowrap}
+  tr.skip td{opacity:.45}
+  tr.warnrow td:first-child{box-shadow:inset 3px 0 0 var(--warn)}
+  .tag{display:inline-block;border-radius:6px;padding:1px 8px;font-size:.78rem;margin:2px 4px 2px 0}
+  .tag.w{background:var(--warn-bg);color:var(--warn)}
+  .tag.d{background:var(--bad-bg);color:var(--bad)}
+  #tbl{display:flex;flex-direction:column;gap:16px}
+  .oc{border:1px solid var(--line);border-left:6px solid var(--accent);border-radius:12px;background:var(--card);box-shadow:0 1px 3px rgba(0,0,0,.08);overflow:hidden}
+  .oc.skip{opacity:.5;border-left-color:var(--line)}
+  .oc.warnrow{border-left-color:var(--warn)}
+  .oc-h{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;padding:10px 14px;background:var(--bg);border-bottom:1px solid var(--line)}
+  .oc-h input[type=checkbox]{width:22px;height:22px}
+  .oc-h .no{font-weight:700;font-size:1.05rem}
+  .oc-b{padding:14px;display:grid;grid-template-columns:repeat(12,1fr);gap:12px}
+  .f{display:flex;flex-direction:column;gap:3px;min-width:0}
+  .f>span{font-size:.8rem;color:var(--mut);font-weight:600}
+  .f input{font-size:1rem;padding:8px 10px;min-height:40px;width:100%}
+  .c8{grid-column:span 8}.c4{grid-column:span 4}.c3{grid-column:span 3}.c2{grid-column:span 2}.c12{grid-column:span 12}.c6{grid-column:span 6}
+  .oc-f{padding:0 14px 12px}
+  .oc-f details{border-top:1px dashed var(--line);padding-top:8px}
+  @media(max-width:800px){.c4,.c3,.c2,.c6,.c8{grid-column:span 12}.c2{grid-column:span 6}}
+  .no{font-variant-numeric:tabular-nums;white-space:nowrap}
+  details summary{cursor:pointer;color:var(--mut);font-size:.85rem}
+  details table{min-width:0;margin-top:6px}
+  .hint{color:var(--mut);font-size:.9rem}
+  #stats{font-weight:600}
+  /* print labels */
+  #labels{display:none}
+  .label{width:210mm;height:148mm;padding:12mm 14mm 8mm 16mm;page-break-after:always;font-family:Tahoma,"Sarabun",sans-serif;font-size:20pt;line-height:1.35;overflow:hidden}
+  .label .h{text-align:center;font-size:28pt;margin-bottom:6mm}
+  .label p{margin:0 0 3mm}
+  #confirm{display:none}
+  .cf{page:confirm;width:210mm;padding:8mm 14mm 4mm;font-family:Tahoma,"Sarabun",sans-serif;font-size:12pt;color:#000;background:#fff}
+  .cf h2{text-align:center;font-size:16pt;margin:0 0 1.5mm}
+  .cf .meta{display:flex;flex-wrap:wrap;gap:1mm 10mm;margin:0 0 3mm;font-size:12pt}
+  .cf table{width:100%;min-width:0;border-collapse:collapse;table-layout:fixed}
+  .cf th,.cf td{border:1px solid #000;padding:2.2mm 2mm;font-size:11.5pt;color:#000;vertical-align:middle}
+  .cf th{background:#eee;text-align:center}
+  .cf td.c{text-align:center}
+  .cf tr{page-break-inside:avoid}
+  .cf td.items{font-size:10.5pt;line-height:1.35;padding-left:3mm}
+  .cf thead{display:table-header-group}
+  .cf td.sig{height:17mm}
+  .cf .ord{display:flex;border:1.5px solid #000;margin-bottom:2.5mm;page-break-inside:avoid;break-inside:avoid}
+  .cf .seq{width:14mm;display:flex;align-items:center;justify-content:center;font-size:20pt;font-weight:700;background:#eee;border-right:1.5px solid #000}
+  .cf .mid{flex:1;padding:2mm 3mm;min-width:0}
+  .cf .top{display:flex;justify-content:space-between;gap:4mm;align-items:flex-start;padding-bottom:1.5mm;border-bottom:1px dashed #666;margin-bottom:1.5mm}
+  .cf .dest{font-size:12.5pt;font-weight:700}
+  .cf .who{font-size:10.5pt;margin-top:.5mm}
+  .cf .cnt{font-size:18pt;font-weight:700;text-align:center;line-height:1}
+  .cf .cnt small{display:block;font-size:9pt;font-weight:400}
+  .cf .it{display:flex;justify-content:space-between;gap:4mm;font-size:10pt;line-height:1.4;padding:0}
+  .cf .it b{white-space:nowrap}
+  .cf .sg{width:42mm;border-left:1.5px solid #000;position:relative;min-height:17mm}
+  .cf .sg span{position:absolute;top:1.5mm;left:2mm;font-size:8.5pt;color:#555}
+  .cf .tot{text-align:right;font-size:13pt;margin:1mm 0 3mm;padding-top:2mm;border-top:2px solid #000}
+  .cf .sigrow{display:flex;justify-content:space-between;gap:10mm;margin-top:4mm;page-break-inside:avoid}
+  .cf .sigbox{flex:1;text-align:center}
+  .cf .sigbox .line{border-bottom:1px solid #000;height:11mm;margin-bottom:2mm}
+  .cf .note{margin-top:2mm;font-size:11pt}
+  .tabs{display:flex;gap:8px;margin:0 0 16px;border-bottom:2px solid var(--line)}
+  .tab{border:none;background:none;border-bottom:3px solid transparent;border-radius:0;padding:10px 16px;color:var(--mut);font-weight:600;margin-bottom:-2px}
+  .tab.on{color:var(--accent);border-bottom-color:var(--accent)}
+  .tab:disabled{opacity:.4}
+  .pick{display:grid;grid-template-columns:1fr 1.4fr auto auto;gap:10px;align-items:end;margin:12px 0 4px}
+  .pick select{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:9px 8px;min-height:42px;width:100%}
+  .pick button{min-height:42px;white-space:nowrap}
+  @media(max-width:760px){.pick{grid-template-columns:1fr}}
+  .cfrow .its{font-size:.88rem;color:var(--mut);margin-top:5px;line-height:1.5}
+  .cfrow .its b{color:var(--ink)}
+  .cfrow .mv{display:flex;flex-direction:column;gap:2px}
+  .cfrow .mv button{padding:1px 7px;line-height:1.2;font-size:.8rem}
+  .cfrow .rm{color:var(--bad);border-color:var(--line);padding:6px 10px}
+  .cfrow{display:flex;align-items:center;gap:12px;border:1px solid var(--line);border-left:6px solid var(--accent);border-radius:10px;padding:10px 12px;margin-bottom:10px;background:var(--card)}
+  .cfrow.off{opacity:.45;border-left-color:var(--line)}
+  .cfrow input[type=number]{width:62px;font-size:1.15rem;font-weight:700;text-align:center;min-height:44px}
+  .cfrow .d{flex:1;min-width:0}
+  .cfrow{align-items:flex-start}
+  .cfrow>input[type=number],.cfrow .p,.cfrow .mv,.cfrow .rm{margin-top:2px}
+  .cfrow .d input{font-size:1rem;min-height:38px}
+  .cfrow .w{font-size:.85rem;color:var(--mut);margin-top:3px}
+  .cfrow .p{font-size:1.2rem;font-weight:700;white-space:nowrap}
+  .cfrow .p small{font-size:.75rem;font-weight:400;color:var(--mut)}
+  @media(max-width:700px){.cfrow{flex-wrap:wrap}.cfrow .d{flex-basis:100%;order:3}}
+  @page confirm{size:A4 portrait;margin:0}
+  @page{size:A5 landscape;margin:0}
+  @media print{
+    body{background:#fff;color:#000}
+    .wrap{display:none}
+    body.pm-labels #labels{display:block}
+    body.pm-confirm #confirm{display:block}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>ใบปะหน้าขนส่ง</h1>
+  <p class="sub">บริษัท เมืองเกษตร จำกัด · อัปโหลดไฟล์ออเดอร์ (CSV) → ได้ใบปะหน้า 1 ใบต่อออเดอร์ พร้อมจำนวนชิ้นคำนวณจากตารางสินค้า · ข้อมูลประมวลผลในเครื่องคุณเท่านั้น ไม่ถูกส่งไปที่ไหน</p>
+
+  <div class="tabs">
+    <button class="tab on" id="tabL" data-p="L">1 · ทำใบปะหน้า</button>
+    <button class="tab" id="tabC" data-p="C">2 · ใบยืนยันส่งมอบ</button>
+  </div>
+
+<div id="pgL">
+  <div class="card">
+    <div class="drop" id="drop">
+      <b>ลากไฟล์ CSV มาวางที่นี่ หรือคลิกเพื่อเลือกไฟล์</b>
+      เลือกได้หลายไฟล์พร้อมกัน
+      <input type="file" id="file" accept=".csv,.txt" multiple hidden>
+    </div>
+  </div>
+
+  <div class="card" id="result" hidden>
+    <div class="row sp">
+      <div id="stats"></div>
+      <div class="row">
+        <label class="opt">นับจำนวนชิ้นแบบ
+          <select id="mode">
+            <option value="perItem">แยกตามรายการ (ปัดเศษขึ้นทุกรายการ)</option>
+            <option value="combined">รวมทั้งออเดอร์ (ปัดเศษขึ้นครั้งเดียว)</option>
+          </select>
+        </label>
+        <label class="opt"><input type="checkbox" id="hideDone"> ซ่อนออเดอร์ที่ทำแล้ววันนี้</label>
+      </div>
+    </div>
+    <p class="hint">ออเดอร์แยกเป็นการ์ดใบละออเดอร์ แก้ข้อความได้ทุกช่องก่อนดาวน์โหลด · ติ๊กออกเพื่อไม่ทำใบนั้น · จำนวน 0 = เว้นว่างไว้ให้เขียนเอง</p>
+    <div id="tbl"></div>
+    <div class="row" style="margin-top:14px">
+      <button class="pri" id="dlDocx">ดาวน์โหลด Word (.docx)</button>
+      <button id="print">พิมพ์ / บันทึกเป็น PDF</button>
+      <span class="hint" id="msg"></span>
+    </div>
+  </div>
+
+  <div class="card hint">
+    <b>วิธีนับจำนวนชิ้น</b> — ใช้รหัสสินค้า (เช่น <code>CHAR0004</code>, <code>ESTM0040</code>) จับคู่กับตาราง "บรรจุหีบ" เพราะชื่อสินค้าซ้ำกันได้ในต่างแบรนด์ แต่รหัสไม่ซ้ำ · จำนวนชิ้น = จำนวนที่สั่ง ÷ บรรจุต่อหีบ · ของแถม (รหัส FOC) ไม่นับ · สินค้าที่หาไม่เจอในตารางจะขึ้นเตือนสีส้ม
+  </div>
+</div>
+
+<div id="pgC" hidden>
+  <div class="card" id="cfempty" hidden><p class="hint" style="margin:0">ยังไม่มีออเดอร์ — กลับไปแท็บ "ทำใบปะหน้า" แล้วอัปโหลดไฟล์ CSV ก่อน</p></div>
+  <div class="card" id="cfcard" hidden>
+    <b>ใบยืนยันส่งมอบ (ให้คนรถเซ็น)</b>
+    <p class="hint">เลือกขนส่ง แล้วเลือกชื่อลูกค้า กด "เพิ่ม" — สินค้าและจำนวนลังจะตามมาเอง · เพิ่มได้ทีละใบตามลำดับที่คนรถจะไปส่ง</p>
+    <div class="pick">
+      <label class="f"><span>ขนส่ง</span><select id="pkT"></select></label>
+      <label class="f"><span>ชื่อลูกค้า</span><select id="pkC"></select></label>
+      <button class="pri" id="pkAdd">+ เพิ่มเข้าใบยืนยัน</button>
+      <button id="pkAddAll">+ เพิ่มทั้งขนส่งนี้</button>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <button id="autoSeq">เพิ่มทุกออเดอร์ (เรียงตามขนส่ง)</button>
+      <button id="clearSeq">ล้างทั้งหมด</button>
+    </div>
+    <div id="cflist" style="margin-top:14px"></div>
+    <div class="row" style="margin-top:10px">
+      <label class="opt">คนขับรถ <input type="text" id="cfDriver" placeholder="ชื่อคนขับ" style="width:200px"></label>
+      <label class="opt">ทะเบียนรถ <input type="text" id="cfPlate" placeholder="ทะเบียน" style="width:140px"></label>
+      <label class="opt">ส่งที่ (ทั้งใบ) <input type="text" id="cfDest" placeholder="ไม่บังคับ" style="width:200px"></label>
+    </div>
+    <div class="row" style="margin-top:12px">
+      <button class="pri" id="printConfirm">พิมพ์ใบยืนยัน / บันทึกเป็น PDF</button>
+      <span class="hint" id="cfmsg"></span>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<div id="labels"></div>
+<div id="confirm"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/docx@9.6.1/dist/index.iife.js"></script>
+<script src="data/products.js"></script>
+<script src="data/aliases.js"></script>
+<script src="core.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
